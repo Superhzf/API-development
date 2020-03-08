@@ -1,14 +1,15 @@
 from fastapi import FastAPI, Query, Path, Body
 
 from enum import Enum
-from typing import Optional, List
-from pydantic import BaseModel, Field
+from typing import Optional, List, Set,Dict
+from pydantic import BaseModel, Field, HttpUrl
 
 # The function parameters will be recognized as follows:
 #
 # If the parameter is also declared in the path, it will be used as a path parameter.
 # If the parameter is of a singular type (like int, float, str, bool, etc) it will be interpreted as a query parameter.
-# If the parameter is declared to be of the type of a Pydantic model, it will be interpreted as a request body.
+# If the parameter is declared to be of the type of a Pydantic model or a list of a type of Pydantic models,
+# it will be interpreted as a request body.
 
 # app is an instance of the class FastAPI
 app = FastAPI()
@@ -86,4 +87,22 @@ async def read_item3(item_id: int = Path(..., description='the description of th
     return q, item_id
 
 
+# Body nested models
+class Image(BaseModel):
+    url:HttpUrl
+    name:str
+
+class Item(BaseModel):
+    name:str
+    description:str=None
+    price:float
+    tax:float
+    tags:Set[str] = set()
+    image:Image = None
+
+
+# In this case, weights should be a request body, it is not a query parameter
+@app.post('/index_weights/')
+async def create_index_weights(weights: Dict[int, str],weights2:int):
+    return weights,weights2
 
