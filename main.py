@@ -1,7 +1,7 @@
-from fastapi import FastAPI
+from fastapi import FastAPI,Query
 
 from enum import Enum
-from typing import Optional
+from typing import Optional, List
 from pydantic import BaseModel
 
 # app is an instance of the class FastAPI
@@ -58,3 +58,19 @@ async def create_item(item_id: int,item: Item):
         price_with_tax = item.price+item.tax
         item_dict.update({'price_with_tax':price_with_tax})
     return item_dict, item_id
+
+
+# Query parameters and string validation
+# ...: applies to q making it required, if you want q to be optional,
+# max_length: applies to q making it less than 50
+# regex: applies to q making it equal to fixedquery
+@app.get('/item_query/')
+async def read_item3(q: str = Query(..., max_length=50, regex='^fixedquery$', alias='item-query',
+                                    description='the description of the parameter')):
+    return q
+
+# http://localhost:8000/item_list/?q=foo&q=bar
+@app.get('/item_list/')
+async def read_item3(q: List[str] = Query(['huzefu','beixuanqin'])):
+    return q
+
