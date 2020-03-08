@@ -1,8 +1,14 @@
-from fastapi import FastAPI, Query, Path
+from fastapi import FastAPI, Query, Path, Body
 
 from enum import Enum
 from typing import Optional, List
 from pydantic import BaseModel
+
+# The function parameters will be recognized as follows:
+#
+# If the parameter is also declared in the path, it will be used as a path parameter.
+# If the parameter is of a singular type (like int, float, str, bool, etc) it will be interpreted as a query parameter.
+# If the parameter is declared to be of the type of a Pydantic model, it will be interpreted as a request body.
 
 # app is an instance of the class FastAPI
 app = FastAPI()
@@ -50,14 +56,14 @@ class Item(BaseModel):
     price: float
     tax: float = None
 
-
+# Body will make importance from a query parameter to a body parameter
 @app.post('/item_request/{item_id}')
-async def create_item(item_id: int,item: Item):
+async def create_item(item_id: int, item: Item, importance: int = Body(...)):
     item_dict = item.dict()
     if item.tax:
         price_with_tax = item.price+item.tax
         item_dict.update({'price_with_tax':price_with_tax})
-    return item_dict, item_id
+    return item_dict, item_id,importance
 
 
 # Query parameters and string validation
