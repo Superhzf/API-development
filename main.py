@@ -1,4 +1,4 @@
-from fastapi import FastAPI,Query
+from fastapi import FastAPI, Query, Path
 
 from enum import Enum
 from typing import Optional, List
@@ -69,8 +69,15 @@ async def read_item3(q: str = Query(..., max_length=50, regex='^fixedquery$', al
                                     description='the description of the parameter')):
     return q
 
-# http://localhost:8000/item_list/?q=foo&q=bar
-@app.get('/item_list/')
-async def read_item3(q: List[str] = Query(['huzefu','beixuanqin'])):
-    return q
+# http://127.0.0.1:8000/item_list/3/?q=huzefu&q=beixuan
+# A path parameter is always required, so it should always look like Path(...)
+# ge: greater than or equal to
+# gt: greater than
+# le: less than or equal to
+@app.get('/item_list/{item_id}/')
+async def read_item3(item_id: int = Path(..., description='the description of the path parameters', ge=1),
+                     q: List[str] = Query(['huzefu', 'beixuanqin'])):
+    return q, item_id
+
+# Path parameters and numeric validations
 
