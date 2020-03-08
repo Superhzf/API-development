@@ -2,6 +2,7 @@ from fastapi import FastAPI
 
 from enum import Enum
 from typing import Optional
+from pydantic import BaseModel
 
 # app is an instance of the class FastAPI
 app = FastAPI()
@@ -38,3 +39,22 @@ fake_items = [{"item_name": "Foo"}, {"item_name": "Bar"}, {"item_name": "Baz"}]
 @app.get('/items/{item_id}/users/{user_id}/')
 async def read_item2(item_id: Optional[int]=None, user_id: Optional[int]=None, skip: int = 0, limit: int = 10):
     return fake_items[skip:skip+limit], item_id, user_id
+
+
+# Request body
+# If you use dict would also work but it is not able to do auto-completion and error checks for incorrect types and
+# operations
+class Item(BaseModel):
+    name: str
+    description: str = None
+    price: float
+    tax: float = None
+
+
+@app.post('/item_request/{item_id}')
+async def create_item(item_id: int,item: Item):
+    item_dict = item.dict()
+    if item.tax:
+        price_with_tax = item.price+item.tax
+        item_dict.update({'price_with_tax':price_with_tax})
+    return item_dict, item_id
