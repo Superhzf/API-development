@@ -2,7 +2,7 @@ from fastapi import FastAPI, Query, Path, Body
 
 from enum import Enum
 from typing import Optional, List
-from pydantic import BaseModel
+from pydantic import BaseModel, Field
 
 # The function parameters will be recognized as follows:
 #
@@ -52,9 +52,9 @@ async def read_item2(item_id: Optional[int]=None, user_id: Optional[int]=None, s
 # operations
 class Item(BaseModel):
     name: str
-    description: str = None
-    price: float
-    tax: float = None
+    description: str = Field(None,title='the description of this field',max_length=10)
+    price: float=Field(...,gt=0)
+    tax: float=None
 
 # Body will make importance from a query parameter to a body parameter
 @app.post('/item_request/{item_id}')
@@ -85,5 +85,5 @@ async def read_item3(item_id: int = Path(..., description='the description of th
                      q: List[str] = Query(['huzefu', 'beixuanqin'])):
     return q, item_id
 
-# Path parameters and numeric validations
+
 
