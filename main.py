@@ -1,8 +1,8 @@
-from fastapi import FastAPI, Query, Path, Body
+from fastapi import FastAPI, Query, Path, Body, Cookie, Header
 
 from enum import Enum
 from typing import Optional, List, Set,Dict
-from pydantic import BaseModel, Field, HttpUrl
+from pydantic import BaseModel, Field, HttpUrl,EmailStr
 
 # The function parameters will be recognized as follows:
 #
@@ -105,4 +105,29 @@ class Item(BaseModel):
 @app.post('/index_weights/')
 async def create_index_weights(weights: Dict[int, str],weights2:int):
     return weights,weights2
+
+# Cookie and Header parameters
+@app.get('/items_cookie/')
+async def read_cookie(ads_id:str = Cookie(None),user_agent=Header(None),x_token:List[str]=Header(None)):
+    return {"ads_id":ads_id},{'user-agent':user_agent},{'X-Token values':x_token}
+
+
+# Response model
+class UserIn(BaseModel):
+    username:str
+    password:str
+    email:EmailStr
+    fullname:str=None
+
+
+class UserOut(BaseModel):
+    username:str
+    email:EmailStr
+    fullname:str='NoFullName'
+
+# this way, user password will not be responded
+# response_model_exclude_unset=True means it only returns attributes in UserOut that are filled out
+@app.post('/items_response/', response_model=UserOut,response_model_exclude_unset=True)
+async def create_item_response(user: UserIn):
+    return user
 
