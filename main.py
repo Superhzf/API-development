@@ -255,7 +255,14 @@ async def update_item(item_id: str, item: UpdateItem):
     items[item_id] = update_item_encoded
     return update_item_encoded
 
-
+# with the help of patch, you can update what you want and leave the rest intact
 @app.patch('/item_update/{item_id}',response_model=UpdateItem)
 async def partial_update(item_id:str,item:UpdateItem):
-    
+    stored_item_data = items[item_id]
+    stored_item_model = Item(**stored_item_data)
+    update_data = item.dict(exclude_unset=True)
+    updated_item = stored_item_model.copy(update=update_data)
+    items[item_id] = jsonable_encoder(updated_item)
+    return updated_item
+
+
