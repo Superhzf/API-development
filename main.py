@@ -1,10 +1,12 @@
 from fastapi import FastAPI, Query, Path, Body, Cookie, Header, Form, File, UploadFile, HTTPException,Request
 from fastapi.responses import JSONResponse
 from fastapi.exception_handlers import http_exception_handler,request_validation_exception_handler
+from fastapi.encoders import jsonable_encoder
 
 from enum import Enum
 from typing import Optional, List, Set,Dict, Union
 from pydantic import BaseModel, Field, HttpUrl,EmailStr
+from datetime import datetime
 
 # The function parameters will be recognized as follows:
 #
@@ -200,9 +202,32 @@ async def unicorn_exception_handler(request:Request,exc:UnicornException):
     return JSONResponse(status_code=418,content={"message": f"Oops! {exc.name} did something. There goes a rainbow..."})
 
 
-@app.get('/unicorns/{name}')
+@app.get('/unicorns/{name}',tags=['Exception-handler'], summary='handle exception', response_description='hhh')
 async def read_unicorn(name:str):
+    # below is the docstring which works the same as the description path parameter
+    """
+    Study how to handle exceptions of FastAPI
+
+    :param name:
+    :return:
+    """
     if name == 'yolo':
         raise UnicornException(name=name)
     return {"unicorn_name":name}
 
+# JSON compatible encoder
+fake_db = {}
+
+
+class ItemDB(BaseModel):
+    title:str
+    timestamp:datetime
+    description:str=None
+
+
+@app.get('/json_encoder/{id}')
+async def save_item(id:str,item:ItemDB):
+    # jsonable_encoder will transform timestamp to str which is JSON compatible
+    # at the same time, ItemDB will be transformed to a python dict
+    json_compitable_data = jsonable_encoder(item)
+    fake_db[id] = json_compitable_data
