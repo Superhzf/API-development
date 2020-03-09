@@ -231,3 +231,31 @@ async def save_item(id:str,item:ItemDB):
     # at the same time, ItemDB will be transformed to a python dict
     json_compitable_data = jsonable_encoder(item)
     fake_db[id] = json_compitable_data
+
+
+# Body updates
+class UpdateItem(BaseModel):
+    name:str=None
+    description:str=None
+    price:float=None
+    tax:float = 10.5
+    tags:List[str]=[]
+
+
+items = {
+    "foo": {"name": "Foo", "price": 50.2},
+    "bar": {"name": "Bar", "description": "The bartenders", "price": 62, "tax": 20.2},
+    "baz": {"name": "Baz", "description": None, "price": 50.2, "tax": 10.5, "tags": []},
+}
+
+# this way, if the item does not include tax, then the returned object will have the default value
+@app.put('/item_update/{item_id}',response_model=UpdateItem)
+async def update_item(item_id: str, item: UpdateItem):
+    update_item_encoded = jsonable_encoder(item)
+    items[item_id] = update_item_encoded
+    return update_item_encoded
+
+
+@app.patch('/item_update/{item_id}',response_model=UpdateItem)
+async def partial_update(item_id:str,item:UpdateItem):
+    
