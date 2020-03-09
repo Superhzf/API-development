@@ -1,4 +1,6 @@
-from fastapi import FastAPI, Query, Path, Body, Cookie, Header, Form, File, UploadFile
+from fastapi import FastAPI, Query, Path, Body, Cookie, Header, Form, File, UploadFile, HTTPException,Request
+from fastapi.responses import JSONResponse
+from fastapi.exception_handlers import http_exception_handler,request_validation_exception_handler
 
 from enum import Enum
 from typing import Optional, List, Set,Dict, Union
@@ -172,7 +174,35 @@ async def login(username: str = Form(...),password: str = Form(...)):
 async def create_file(file: bytes=File(...)):
     return {"file_size":len(file)}
 
+
 # uploadfile will not consume all the memory, it will be saved to disk if too large
 @app.post('/uploadfile/')
 async def create_upload_file(file:UploadFile=File(...)):
     return {'filename':file.filename}
+
+# Handling errors
+items = {"foo": "The Foo Wrestlers"}
+@app.get('/item_error/{item_id}')
+async def read_item(item_id:str):
+    if item_id not in items:
+        raise HTTPException(status_code=404,detail='Here we got an exception')
+    return {'item':items[item_id]}
+
+
+# custom exception handler
+class UnicornException(Exception):
+    def __init__(self,name:str):
+        self.name = name
+
+
+@app.exception_handler(UnicornException)
+async def unicorn_exception_handler(request:Request,exc:UnicornException):
+    return JSONResponse(status_code=418,content={"message": f"Oops! {exc.name} did something. There goes a rainbow..."})
+
+
+@app.get('/unicorns/{name}')
+async def read_unicorn(name:str):
+    if name == 'yolo':
+        raise UnicornException(name=name)
+    return {"unicorn_name":name}
+
