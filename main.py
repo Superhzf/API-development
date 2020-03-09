@@ -1,7 +1,7 @@
 from fastapi import FastAPI, Query, Path, Body, Cookie, Header
 
 from enum import Enum
-from typing import Optional, List, Set,Dict
+from typing import Optional, List, Set,Dict, Union
 from pydantic import BaseModel, Field, HttpUrl,EmailStr
 
 # The function parameters will be recognized as follows:
@@ -113,17 +113,23 @@ async def read_cookie(ads_id:str = Cookie(None),user_agent=Header(None),x_token:
 
 
 # Response model
-class UserIn(BaseModel):
+class UserBase(BaseModel):
     username:str
-    password:str
     email:EmailStr
     fullname:str=None
 
+# Using UserBase model can help reduce duplicates
+class UserIn(UserBase):
+    password:str
 
-class UserOut(BaseModel):
-    username:str
-    email:EmailStr
-    fullname:str='NoFullName'
+
+class UserOut(UserBase):
+    pass
+
+
+class UserInDB(UserBase):
+    hashed_password:str
+
 
 # this way, user password will not be responded
 # response_model_exclude_unset=True means it only returns attributes in UserOut that are filled out
@@ -131,3 +137,23 @@ class UserOut(BaseModel):
 async def create_item_response(user: UserIn):
     return user
 
+# Etra models
+# For example, for user models,
+# the input model needs to be able to have a password
+# the output model should not have a password
+# the database model would probably need to have a hashed password
+def fake_password_hasher(raw_password:str):
+    return "supersecret"+raw_password
+
+
+def fake_save_user(user_in:UserIn):
+    hashed_password=fake_password_hasher(user_in.password)
+    user_in_db = UserInDB(**user_in.dict(),hashed_password=hashed_password)
+    print ("User saved! ..not really!")
+    return user_in_db
+
+# Union means that the returning type could be various types
+@app.post('/user_extra_models/',response_model=Union[UserOut])
+async def creat_user(user_in:UserIn):
+    user_saved = fake_save_user(user_in)
+    return user_saved
