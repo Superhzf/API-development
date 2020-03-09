@@ -1,4 +1,4 @@
-from fastapi import FastAPI, Query, Path, Body, Cookie, Header, Form
+from fastapi import FastAPI, Query, Path, Body, Cookie, Header, Form, File, UploadFile
 
 from enum import Enum
 from typing import Optional, List, Set,Dict, Union
@@ -164,3 +164,15 @@ async def creat_user(user_in:UserIn):
 @app.post('/login/',status_code=222)
 async def login(username: str = Form(...),password: str = Form(...)):
     return {"username": username, "password": password}
+
+
+# Request files
+# bytes type will be stored in memory which only works for small files
+@app.post('/files/')
+async def create_file(file: bytes=File(...)):
+    return {"file_size":len(file)}
+
+# uploadfile will not consume all the memory, it will be saved to disk if too large
+@app.post('/uploadfile/')
+async def create_upload_file(file:UploadFile=File(...)):
+    return {'filename':file.filename}
