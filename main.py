@@ -1,4 +1,4 @@
-from fastapi import FastAPI, Query, Path, Body, Cookie, Header
+from fastapi import FastAPI, Query, Path, Body, Cookie, Header, Form
 
 from enum import Enum
 from typing import Optional, List, Set,Dict, Union
@@ -157,3 +157,10 @@ def fake_save_user(user_in:UserIn):
 async def creat_user(user_in:UserIn):
     user_saved = fake_save_user(user_in)
     return user_saved
+
+
+# Form data
+# It is useful if you want to receive data from field instead of JSON(Pydantic models)
+@app.post('/login/',status_code=222)
+async def login(username: str = Form(...),password: str = Form(...)):
+    return {"username": username, "password": password}
