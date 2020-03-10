@@ -3,6 +3,7 @@ from fastapi.responses import JSONResponse
 from fastapi.exception_handlers import http_exception_handler,request_validation_exception_handler
 from fastapi.encoders import jsonable_encoder
 from fastapi.security import OAuth2PasswordBearer, OAuth2PasswordRequestForm
+from fastapi.middleware.cors import CORSMiddleware
 
 from enum import Enum
 from typing import Optional, List, Set,Dict, Union
@@ -413,3 +414,19 @@ async def login(form_data:OAuth2PasswordRequestForm=Depends()):
 async def read_users_me2(current_user:User=Depends(get_current_active_user)):
     return current_user
 
+
+# Cross Origin Resource Sharing
+origins = [
+    "http://localhost.tiangolo.com",
+    "https://localhost.tiangolo.com",
+    "http://localhost",
+    "http://localhost:8080",
+]
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins = origins,
+    allow_credentials=True, # Cookies should be supported
+    allow_methods=['*'],
+    allow_headers=['*']
+)
