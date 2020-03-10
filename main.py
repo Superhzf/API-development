@@ -1,4 +1,4 @@
-from fastapi import FastAPI, Query, Path, Body, Cookie, Header, Form, File, UploadFile, HTTPException,Request
+from fastapi import FastAPI, Query, Path, Body, Cookie, Header, Form, File, UploadFile, HTTPException,Request, Depends
 from fastapi.responses import JSONResponse
 from fastapi.exception_handlers import http_exception_handler,request_validation_exception_handler
 from fastapi.encoders import jsonable_encoder
@@ -265,4 +265,50 @@ async def partial_update(item_id:str,item:UpdateItem):
     items[item_id] = jsonable_encoder(updated_item)
     return updated_item
 
+
+# Dependency Injection
+async def common_parameter(q:str=None,skip:int=0,limit:int=100):
+    return {'q':q,'skip':skip,'limit':limit}
+
+
+@app.get('/dependencies/')
+async def read_items(commons:dict = Depends(common_parameter)):
+    return commons
+
+
+fake_items_db = [{"item_name": "Foo"}, {"item_name": "Bar"}, {"item_name": "Baz"}]
+
+
+class CommonQueryParams:
+    def __init__(self,q:str=None,skip:int=0,limit:int=100):
+        self.q = q
+        self.skip = skip
+        self.limit = limit
+
+# Depends() == Depends(CommonQueryParams)
+@app.get('/class_dependencies/')
+async def read_items(commons:CommonQueryParams = Depends()):
+    response = {}
+    if commons.q:
+        response.update({'q': commons.q})
+    items_get = fake_items_db[commons.skip:commons.skip+commons.limit]
+    response.update({'items': items_get})
+    return response
+
+
+# dependencies in path operation decorators
+async def verify_token(x_token:str = Header(...)):
+    if x_token!='fake-super-secret-token':
+        raise HTTPException(status_code=400, detail="X-Token header invalid")
+
+
+async def verify_key(x_key:str=Header(...)):
+    if x_key != "fake-super-secret-key":
+        raise HTTPException(status_code=400, detail="X-Key header invalid")
+
+# In the case that we do not need any returned values from dependencies,
+# we can put them in path parameters
+@app.get('/dependencies_path/', dependencies=[Depends(verify_key),Depends(verify_token)])
+async def read_items():
+    return [{"item": "Foo"}, {"item": "Bar"}]
 
