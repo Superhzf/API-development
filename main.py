@@ -19,7 +19,9 @@ from datetime import datetime
 # it will be interpreted as a request body.
 
 # app is an instance of the class FastAPI
-app = FastAPI()
+app = FastAPI(title="Study how to develop REST API using FastAPI",
+              description='This is a very fancy project',
+              version='0.0.1')
 
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="/token")
 
