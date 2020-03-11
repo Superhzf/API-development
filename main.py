@@ -1,4 +1,5 @@
-from fastapi import FastAPI, Query, Path, Body, Cookie, Header, Form, File, UploadFile, HTTPException,Request, Depends,status
+from fastapi import FastAPI, Query, Path, Body, Cookie, Header, Form, File, UploadFile, HTTPException,Request, Depends,status,\
+                    BackgroundTasks
 from fastapi.responses import JSONResponse
 from fastapi.exception_handlers import http_exception_handler,request_validation_exception_handler
 from fastapi.encoders import jsonable_encoder
@@ -430,3 +431,19 @@ app.add_middleware(
     allow_methods=['*'],
     allow_headers=['*']
 )
+
+
+# Background tasks
+# this is the task function which can be async or not
+def write_notification(email:str,message=''):
+    with open('log.txt',mode='w') as email_file:
+        content=f'notification for {email}:{message}'
+        email_file.write(content)
+
+
+@app.get("/send-notification/{email}")
+async def send_notification(email:str,background_tasks:BackgroundTasks):
+    # parameters of the task function will be put in any sequence after the function
+    background_tasks.add_task(write_notification, email, message='email sent notification')
+    return {'message': "Notification sent in the background"}
+
