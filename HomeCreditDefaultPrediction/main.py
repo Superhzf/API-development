@@ -8,3 +8,5 @@ import structlog
 
 
 logger = structlog.get_logger('uvicorn')
+
+class LoggingType()

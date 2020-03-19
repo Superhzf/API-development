@@ -1,0 +1,78 @@
+Q: What is the difference between Python instance v.s. static v.s. class methods
+A: Instance methods are the most common type of methods in Python. It must have self as a parameter. These are so called
+because they can access unique data of their instance. If you have two objects each created from a car class,
+then they each may have different properties. They may have different colors, engine sizes, seats, and so on.
+
+For example,
+
+class DecoratorExample:
+  """ Example Class """
+  def __init__(self):
+    """ Example Setup """
+    print('Hello, World!')
+    self.name = 'Decorator_Example'
+
+  def example_function(self):
+    """ This method is an instance method! """
+    print('I\'m an instance method!')
+    print('My name is ' + self.name)
+
+de = DecoratorExample()
+de.example_function()
+
+Static methods are methods that are related to a class. You don't have to use self. You don't need to instantiate a class.
+@staticmethod decorator was used to tell Python that this method is a static method. They cannot access class data. They
+should be completely self-contained. They can only access parameters provided.
+
+For example,
+
+class DecoratorExample:
+  """ Example Class """
+  def __init__(self):
+    """ Example Setup """
+    print('Hello, World!')
+
+  @staticmethod
+  def example_function():
+    """ This method is a static method! """
+    print('I\'m a static method!')
+
+de = DecoratorExample.example_function()
+
+When is it a good time to use static methods?
+Use static methods if you have something that could be written as a standalone function (not part of any class),
+but you want to keep it within the class because it's somehow semantically related to the class.
+
+Class methods know about their class, They CANNOT access specific instance data, but they CAN call other static methods.
+Class methods do not need self, they do need a parameter cls. This stands for class.
+
+For example,
+
+class DecoratorExample:
+  """ Example Class """
+  def __init__(self):
+    """ Example Setup """
+    print('Hello, World!')
+
+  @classmethod
+  def example_function(cls):
+    """ This method is a class method! """
+    print('I\'m a class method!')
+    cls.some_other_function()
+
+  @staticmethod
+    def some_other_function():
+    print('Hello!')
+
+de = DecoratorExample()
+de.example_function()
+
+When to use class methods?
+Class methods are for when you need to have methods that aren't specific to any particular instance, but still involve
+the class in some way.
+
+
+In summary:
+Instance Methods: The most common method type. Able to access data and properties unique to each instance.
+Static Methods: Cannot access anything else in the class. Totally self-contained code.
+Class Methods: Can access limited methods in the class. Can modify class specific details.
