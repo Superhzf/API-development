@@ -1,5 +1,5 @@
 from fastapi import FastAPI, Query, Path, Body, Cookie, Header, Form, File, UploadFile, HTTPException,Request, Depends,status,\
-                    BackgroundTasks
+                    BackgroundTasks, Response
 from fastapi.responses import JSONResponse
 from fastapi.exception_handlers import http_exception_handler,request_validation_exception_handler
 from fastapi.encoders import jsonable_encoder
@@ -8,9 +8,10 @@ from fastapi.middleware.cors import CORSMiddleware
 import uvicorn
 
 from enum import Enum
-from typing import Optional, List, Set,Dict, Union
+from typing import Optional, List, Set,Dict, Union, Callable, Any
 from pydantic import BaseModel, Field, HttpUrl,EmailStr
 from datetime import datetime
+import time
 
 # The function parameters will be recognized as follows:
 #
@@ -449,6 +450,36 @@ async def send_notification(email:str,background_tasks:BackgroundTasks):
     # parameters of the task function will be put in any sequence after the function
     background_tasks.add_task(write_notification, email, message='email sent notification')
     return {'message': "Notification sent in the background"}
+
+
+# Middleware
+# If there are two middleware functions, they will be executed in order
+@app.middleware('http')
+async def second_add_process_time(request: Request, call_next: Callable) -> Any:
+    start_time = time.time()
+    response = await call_next(request)
+    process_time = time.time() - start_time + 100
+    response.headers["X-Process-Time22222"] = str(process_time)
+    # return response
+    return Response("hahahah", status_code=500)
+
+
+@app.middleware('http')
+async def add_process_time(request: Request, call_next: Callable) -> Any:
+    start_time = time.time()
+    response = await call_next(request)
+    process_time = time.time() - start_time
+    response.headers["X-Process-Time1111111"] = str(process_time)
+    return Response("Test two middleware functions", status_code=500)
+    # return response
+
+
+
+
+
+
+
+
 
 if __name__=='__main__':
     uvicorn.run(app,host='0.0.0.0',port=8080)
