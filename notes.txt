@@ -76,3 +76,10 @@ In summary:
 Instance Methods: The most common method type. Able to access data and properties unique to each instance.
 Static Methods: Cannot access anything else in the class. Totally self-contained code.
 Class Methods: Can access limited methods in the class. Can modify class specific details.
+
+2. Docker tutorial:
+Video: https://www.youtube.com/watch?v=fqMOX6JJhGo
+Exercise: https://kodekloud.com/courses/630704/lectures/11253909
+
+3. Why use environment variable?
+A: we use environment variable so that we do not have to change production code
