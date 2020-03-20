@@ -83,3 +83,18 @@ Exercise: https://kodekloud.com/courses/630704/lectures/11253909
 
 3. Why use environment variable?
 A: we use environment variable so that we do not have to change production code
+
+4. Deploy two containers, one hosts a DB and the other hosts a webapp
+A:
+-- Create a new network named wp-mysql-network using the bridge driver. Allocate subnet 182.18.0.1/24. Configure Gateway 182.18.0.1
+-- docker network create --driver bridge --subnet 182.18.0.1/24 --gateway 182.18.0.1 wp-mysql-network
+
+-- Deploy a mysql database using the mysql image and name it mysql-db. Attach it to the newly created network wp-mysql-network
+-- Set the database password to use db_pass123. The environment variable to set is MYSQL_ROOT_PASSWORD
+-- docker run -d -e MYSQL_ROOT_PASSWORD=db_pass123 --name mysql-db --network wp-mysql-network mysql
+
+-- Deploy a web application named webapp, using image kodekloud/simple-webapp-mysql. Expose port to 38080 on the host.
+-- The application takes an environment variable DB_Host that has the hostname of the mysql database. Make sure to attach it to the newly created network wp-mysql-network
+-- docker run --network=wp-mysql-network -e DB_Host=mysql-db -e DB_Password=db_pass123 -p 38080:8080 --name webapp --link mysql-db:mysql-db -d kodekloud/simple-webapp-mysql
+
+
