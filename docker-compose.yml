@@ -1,0 +1,45 @@
+version: "3.7"
+
+services:
+  dev:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    volumes:
+      - ".:/usr/src/app"
+    ports:
+      - 8000
+    environment:
+      - PGSQL_DEV_PORT=5432
+      - APP_ENV=development
+    depends_on:
+      - pgsql-dev
+    entrypoint:
+      - ./dev-tools/service.docker-entrypoint.sh
+    networks:
+      - income_service_no_staging_conflict
+
+  pgsql-dev:
+    image: postgres:9.4.20
+    ports:
+      - 5432
+    volumes:
+      - "pgdata:/var/lib/postgresql/data"
+    environment:
+      - POSTGRES_USER=service
+      - POSTGRES_PASSWORD=password
+      - POSTGRES_DB=database
+    command: "postgres"
+    networks:
+      - income_service_no_staging_conflict
+
+networks:
+  income_service_no_staging_conflict:
+    driver: bridge
+    ipam:
+      driver: default
+      config:
+        - subnet: 10.69.0.2/24
+
+volumes:
+  pgdata:
