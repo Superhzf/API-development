@@ -1,11 +1,11 @@
-#!/bin/bash
-
+#!/bin/sh
+#echo 'hello world'
 set -euo pipefail
 
-DB=($(from_vault income-service database_host database_name database_username database_password))
+#DB=($(from_vault income-service database_host database_name database_username database_password))
 
-export POSTGRES_HOST=${DB[0]}
-export POSTGRES_DB=${DB[1]}
-export POSTGRES_USER=${DB[2]}
-export POSTGRES_PASSWORD=${DB[3]}
+export POSTGRES_HOST=pgsql-dev
+export POSTGRES_DB=database
+export POSTGRES_USER=service
+export POSTGRES_PASSWORD=password
 export POSTGRES_PORT=${PGSQL_DEV_PORT}

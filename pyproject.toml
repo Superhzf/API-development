@@ -2,7 +2,7 @@
 name = "income-service"
 version = "0.1.0"
 description = "Income verification/prediction service"
-authors = ["Stas Sajin <stas.sajin@earnest.com>", "Onur Ozduygu <onur.ozduygu@earnest.com>", "Tim Chan <tim.chan@earnest.com>"]
+authors = ["Zach Hu <superhzf@hotmail.com>"]
 
 [tool.poetry.dependencies]
 python = "3.7.3"
