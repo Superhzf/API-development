@@ -15,7 +15,7 @@ services:
     depends_on:
       - pgsql-dev
     entrypoint:
-      - /usr/src/app/dev-tools/service.docker-entrypoint.sh
+      - ./dev-tools/service.docker-entrypoint.sh
     networks:
       - income_service_no_staging_conflict
 

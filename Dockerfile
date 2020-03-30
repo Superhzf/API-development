@@ -6,7 +6,8 @@ LABEL service="homecreditdefault"
 # https://www.kaggle.com/getting-started/45288
 ENV JOBLIB_TEMP_FOLDER=/tmp
 
-COPY poetry.lock pyproject.toml ${APP_DIR}/
+#COPY poetry.lock pyproject.toml ${APP_DIR}/
+COPY pyproject.toml ${APP_DIR}/
 
 #RUN apk add --update alpine-sdk wget postgresql-client lz4-dev git libzmq zeromq-dev zeromq
 #RUN curl -sSL https://raw.githubusercontent.com/python-poetry/poetry/master/get-poetry.py | python
@@ -43,3 +44,5 @@ ENV DOCKERIZE_VERSION v0.6.1
 RUN wget https://github.com/jwilder/dockerize/releases/download/$DOCKERIZE_VERSION/dockerize-linux-amd64-$DOCKERIZE_VERSION.tar.gz \
     && tar -C /usr/local/bin -xzvf dockerize-linux-amd64-$DOCKERIZE_VERSION.tar.gz \
     && rm dockerize-linux-amd64-$DOCKERIZE_VERSION.tar.gz
+
+WORKDIR /usr/src/app
