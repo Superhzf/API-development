@@ -15,7 +15,7 @@ COPY pyproject.toml ${APP_DIR}/
 
 RUN apt-get update \
  && for i in $(seq 1 8); do mkdir -p "/usr/share/man/man${i}"; done \
- && apt-get install -y build-essential wget postgresql-client liblz4-tool git \
+ && apt-get install -y build-essential wget postgresql-client liblz4-tool git nano \
  && curl -sSL https://raw.githubusercontent.com/python-poetry/poetry/master/get-poetry.py | python
 RUN /bin/bash -c "source $HOME/.poetry/env; poetry config virtualenvs.create false; poetry install --no-interaction --no-ansi"
 
@@ -46,3 +46,6 @@ RUN wget https://github.com/jwilder/dockerize/releases/download/$DOCKERIZE_VERSI
     && rm dockerize-linux-amd64-$DOCKERIZE_VERSION.tar.gz
 
 WORKDIR /usr/src/app
+
+# setup pythonpath
+ENV PYTHONPATH="/usr/src/app"
