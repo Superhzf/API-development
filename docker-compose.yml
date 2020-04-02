@@ -10,7 +10,12 @@ services:
     ports:
       - 8000
     environment:
-      - PGSQL_DEV_PORT=5432
+      - PGSQL_DEV_PORT=${PGSQL_DEV_PORT}
+      - POSTGRES_HOST=${POSTGRES_HOST}
+      - POSTGRES_DB=${POSTGRES_DB}
+      - POSTGRES_USER=${POSTGRES_USER}
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
+      - POSTGRES_PORT=${PGSQL_DEV_PORT}
       - APP_ENV=development
     depends_on:
       - pgsql-dev
