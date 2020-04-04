@@ -9,7 +9,7 @@ import uvicorn
 
 from enum import Enum
 from typing import Optional, List, Set,Dict, Union, Callable, Any
-from pydantic import BaseModel, Field, HttpUrl,EmailStr
+from pydantic import BaseModel, Field, HttpUrl, EmailStr
 from datetime import datetime
 import time
 

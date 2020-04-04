@@ -3,12 +3,20 @@ import os
 from typing import Any
 
 # Related third party libraries
-from starlette.requests import Request
-from sqlalchemy.engine import Engine
-from sqlalchemy.orm import sessionmaker
 from sqlalchemy import create_engine
+from sqlalchemy.engine import Engine
+from starlette.requests import Request
+from sqlalchemy.orm import Session
+from sqlalchemy.orm import sessionmaker
+
 
 # Local application/library specific imports
+from ..models.api.lookup.output import ApiDefaultPredictionRequestOutputPrediction
+from ..models.db import DefaultPrediction
+from ..models.db import DefaultPredictionRequest
+from ..models.db import ModelMetaData
+from ..utils.logging import logger
+from ..utils.logging import LoggingType
 
 
 DB_USER = os.environ['POSTGRES_USER']
@@ -28,3 +36,72 @@ SessionLocal = sessionmaker(autocommit=False, autoflush=True, bind=engine)
 def get_db(request: Request) -> Any:
     return request.state.db
 
+
+def save_model_metadata(meta: ModelMetaData) -> ModelMetaData:
+    """Store or retrieve the metadata for the prediction model"""
+    db = SessionLocal()
+    mm: ModelMetaData = db.query(ModelMetaData).filter_by(model_version=meta.model_version).first()
+    try:
+        if mm:
+            logger.info(
+                "model meta already exists",
+                data={
+                    "id": mm.id,
+                    "created": mm.created_at,
+                    "description": mm.model_description,
+                    "version": mm.model_version
+                },
+                type=LoggingType.DB_OPS
+            )
+            return mm
+        else:
+            db.add(meta)
+            db.commit()
+            db.refresh(meta)
+            logger.info(
+                "model meta was saved",
+                data={
+                    "id": meta.id,
+                    "created": meta.created_at,
+                    "description": meta.model_description,
+                    "version": meta.model_version,
+                },
+                type=LoggingType.DB_OPS
+            )
+            return meta
+    finally:
+        db.close()
+
+
+def prediction_api_2_db(
+        default_request: DefaultPredictionRequest,
+        response: ApiDefaultPredictionRequestOutputPrediction,
+        model_metadata: ModelMetaData
+) -> DefaultPrediction:
+    """Convert the Prediction data model from API to DB"""
+    response = DefaultPrediction.from_api(default_req=default_request,
+                                          response=response,
+                                          model_metadata=model_metadata)
+    return response
+
+
+def save_income_request_prediction(
+        default_request: DefaultPredictionRequest,
+        response: ApiDefaultPredictionRequestOutputPrediction,
+        model_metadata: ModelMetaData,
+        db: Session
+) -> int:
+    """Store the income request inputs and outputs in the db from from the prediction logic"""
+    response = prediction_api_2_db(default_request, response, model_metadata)
+    db.add(response)
+    db.commit()
+    db.refresh(response)
+    return response
+
+
+def save_default_request(request: DefaultPredictionRequest, db: Session) -> DefaultPredictionRequest:
+    default_req = DefaultPredictionRequest.from_api(request=request)
+    db.add(default_req)
+    db.commit()
+    db.refresh(default_req)
+    return default_req
