@@ -1,0 +1,140 @@
+#!/usr/bin/env python3
+import argparse
+import subprocess
+
+parser = argparse.ArgumentParser(prog="fire",
+                                 description="Fire script for the default prediction service",
+                                 usage="%(prog)s [-v] actions")
+subparsers = parser.add_subparsers(title="actions", dest="command")
+
+parser.add_argument("-v", "--verbose",
+                    action="store_true",
+                    dest="VERBOSE",
+                    help="run in verbose mode")
+# rebuild
+parser_rebuild = subparsers.add_parser("rebuild",
+                                       help="Rebuild the container using docker-compose: docker-compose build.")
+# start
+parser_start = subparsers.add_parser("start",
+                                     help="Start the dev container using docker-compose: docker-compose up dev")
+parser_start.add_argument("-l", "--logging",
+                          required=False,
+                          choices=["json", "text", "debug"],
+                          default="text")
+# nuke
+parser_nuke = subparsers.add_parser("nuke",
+                                    help="Removes all docker images, even the ones unrelated to this project")
+# stop
+parser_stop = subparsers.add_parser("stop",
+                                    help="Stop all running containers, even the ones unrelated to this project")
+# shell
+parser_shell = subparsers.add_parser("shell",
+                                     help="Open a terminal session in this application's development container.")
+# alembic
+alembic_shell = subparsers.add_parser("alembic",
+                                      help="Run an alembic migration.")
+alembic_shell.add_argument("-o", "--operation",
+                           required=True,
+                           choices=['upgrade', 'downgrade'])
+
+args = parser.parse_args()
+STDOUT = None
+STDERR = None
+if args.VERBOSE:
+    STDOUT = subprocess.DEVNULL
+    STDERR = subprocess.DEVNULL
+
+if args.command == 'rebuild':
+    command = ["docker-compose",
+               "build",
+               "--build-arg",
+               "APP_NAME=default-prediction-service",
+               "--build-arg",
+               "APP_VERSION=localdev",]
+    subprocess.check_call(command, stderr=STDERR, stdout=STDOUT)
+elif args.command == 'start':
+    logger = {
+        "json": [
+            "docker-compose",
+            "run",
+            "-e",
+            "logging=json",
+            "-p",
+            "8000:8000",
+            "dev",
+            "uvicorn",
+            "HomeCreditDefaultPrediction.main:app",
+            "--reload",
+            "--host",
+            "0.0.0.0",
+        ],
+        "text": [
+            "docker-compose",
+            "run",
+            "-e",
+            "logging=text",
+            "-p",
+            "8000:8000",
+            "dev",
+            "uvicorn",
+            "HomeCreditDefaultPrediction.main:app",
+            "--reload",
+            "--host",
+            "0.0.0.0",
+        ],
+        "debug": [
+            "docker-compose",
+            "run",
+            "-e",
+            "logging=debug",
+            "-p",
+            "8000:8000",
+            "dev",
+            "uvicorn",
+            "HomeCreditDefaultPrediction.main:app",
+            "--host",
+            "0.0.0.0",
+        ],
+    }
+    subprocess.check_call(logger[args.logging], stderr=STDERR, stdout=STDOUT)
+elif args.command == 'nuke':
+    list_docker_images = ["docker", "images", "-q"]
+    images = subprocess.check_output(list_docker_images)
+    images = images.decode("utf-8").split("\n")[:-1]
+    if len(images) != 0:
+        full_command = ["docker", "rmi", "-f"] + images
+        subprocess.check_call(full_command, stderr=STDERR, stdout=STDOUT)
+        print("All existing docker images have been dropped!")
+    else:
+        print('No docker images is found!')
+elif args.command == 'stop':
+    list_docker_containers = ['docker', 'ps', '-q']
+    containers = subprocess.check_output(list_docker_containers)
+    containers = containers.decode("utf-8").split("\n")[:-1]
+    if len(containers) != 0:
+        full_command = ["docker", "stop"] + containers
+        subprocess.check_call(full_command, stderr=STDERR, stdout=STDOUT)
+        print("All running containers have been stopped!")
+    else:
+        print('No running containers is found!')
+elif args.command == 'shell':
+    get_api_container = ['docker', 'ps', '--filter', 'publish=8000', '-q']
+    api_container_id = subprocess.check_output(get_api_container)
+    api_container_id = api_container_id.decode("utf-8").split("\n")[:-1]
+    if len(api_container_id) > 1:
+        raise Exception('The number of container found is larger than 1, please check manually!')
+    elif len(api_container_id) == 1:
+        full_command = ["docker", "exec", "-it"] + api_container_id + ["bash"]
+        subprocess.check_call(full_command, stderr=STDERR, stdout=STDOUT)
+    else:
+        print('No container id is found!')
+elif args.command == 'alembic':
+    db_ops = {
+        "upgrade": ["docker-compose", "run", "dev", "alembic", "upgrade", "head"],
+        "downgrade": ["docker-compose", "run", "dev", "alembic", "downgrade", "-1"]
+    }
+    try:
+        subprocess.check_call(db_ops[args.operation], stderr=STDERR, stdout=STDOUT)
+    except:
+        print("DB ops failed, it may because you are doing downgrade but no db available in the database, please try "
+              "upgrade first")
