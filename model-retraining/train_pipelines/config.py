@@ -1,12 +1,3 @@
-# Paths and submission name
-# DATA_DIRECTORY = "./input"
-# PICKLED_DATA_DIRECTORY = "./output_upload"
-# SUBMISSION_DIRECTORY = "./submissions"
-# SUBMISSION_SUFIX = "_model_name"
-# The purpose of this project is to deploy models instead of making predictions for unseen data
-# GENERATE_SUBMISSION_FILES = False
-
-# LightGBM model - configurations and hyperparameters
 NUM_THREADS = 4
 NUM_FOLDS = 5
 EARLY_STOPPING = 100
