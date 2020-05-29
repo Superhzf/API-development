@@ -21,6 +21,7 @@ import sys
 
 data_folder = "../home-credit-default-risk/"
 prediction_folder = './binary_files/'
+archive_folder = './binary_files/archive_binaries/'
 GENERATE_AUX = int(sys.argv[1])
 
 train_df = pd.read_csv(os.path.join(data_folder,'application_train.csv'))
@@ -52,7 +53,7 @@ if GENERATE_AUX:
                             ('do_label_encoder', do_label_encoder())])
     transformer.fit(train_df,None)
     joblib.dump(transformer, os.path.join(prediction_folder, "transformer.joblib"))
-    
+
     bureau_df = bureau_pipeline.get_bureau(data_folder, num_rows=None)
     joblib.dump(bureau_df, os.path.join(prediction_folder, "bureau_and_balance.joblib"))
     del bureau_df
@@ -82,7 +83,6 @@ if GENERATE_AUX:
     del cc_df
     gc.collect()
     print('cc_df done!')
-    
     print ('Finsh generating aux data, please train the model!')
 else:
     transformer = joblib.load(os.path.join(prediction_folder, "transformer.joblib"))
@@ -91,27 +91,27 @@ else:
     del transformer
     del train_df
     gc.collect()
-    
+
     bureau_df = joblib.load(os.path.join(prediction_folder, "bureau_and_balance.joblib"))
     transformed_data = pd.merge(transformed_data, bureau_df, on='SK_ID_CURR', how='left')
     del bureau_df
     gc.collect()
-    
+
     prev_df = joblib.load(os.path.join(prediction_folder, "previous.joblib"))
     transformed_data = pd.merge(transformed_data, prev_df, on='SK_ID_CURR', how='left')
     del prev_df
     gc.collect()
-    
+
     pos_df = joblib.load(os.path.join(prediction_folder, "pos_cash.joblib"))
     transformed_data = pd.merge(transformed_data, pos_df, on='SK_ID_CURR', how='left')
     del pos_df
     gc.collect()
-    
+
     ins_df = joblib.load(os.path.join(prediction_folder, "payments.joblib"))
     transformed_data = pd.merge(transformed_data, ins_df, on='SK_ID_CURR', how='left')
     del ins_df
     gc.collect()
-    
+
     cc_df = joblib.load(os.path.join(prediction_folder, "credit_card.joblib"))
     transformed_data = pd.merge(transformed_data, cc_df, on='SK_ID_CURR', how='left')
     del cc_df
@@ -119,9 +119,9 @@ else:
 
     transformed_data = reduce_memory(transformed_data)
     transformed_data.columns = ["".join (c if c.isalnum() else "_" for c in str(x)) for x in transformed_data.columns]
-    
+
     del_features = ['TARGET', 'SK_ID_CURR', 'SK_ID_BUREAU', 'SK_ID_PREV', 'index', 'level_0']
-    
+
     predictors = [feat for feat in transformed_data.columns if feat not in del_features]
     with open(os.path.join(prediction_folder, "features.txt"), "w") as output:
         for feat in predictors:
@@ -131,36 +131,53 @@ else:
                                   [int(0.80 * len(transformed_data)), int(0.90 * len(transformed_data))])
     del transformed_data
     gc.collect()
-    
+
     train_y = train['TARGET'].values
     train_X = train[predictors].values
     valid_y = valid['TARGET'].values
     valid_X = valid[predictors].values
-    
+
     created_date = str(datetime.today())
-#     created_date_v = created_date.strftime("%m_%d_%Y_%H_%M_%S")
-    
+
     params = {'random_state': config.RANDOM_SEED, 'nthread': config.NUM_THREADS}
     clf = LGBMClassifier(**{**params, **config.LIGHTGBM_PARAMS})
     clf = clf.fit(train_X, train_y,eval_set=[(train_X, train_y), (valid_X, valid_y)],
                       eval_metric='auc',verbose=200, early_stopping_rounds=100,
                       feature_name=predictors,
                       categorical_feature=config.CATEGORICAL_FEAT)
-    joblib.dump(clf, os.path.join(prediction_folder, "lgb_model.joblib".format(created_date_v)))
+
+    # If an old model exists, move it to the archive folder
+    files = os.listdir(prediction_folder)
+    is_exist = False
+    for this_file in files:
+        if 'lgb_model.joblib' == this_file:
+            is_exist = True
+            break
+    if is_exist:
+        old_model = joblib.load(os.path.join(prediction_folder, "lgb_model.joblib"))
+        old_meta_data = joblib.load(os.path.join(prediction_folder, "meta_data.joblib"))
+        old_date = old_meta_data['created_at']
+        old_date = datetime.strptime(old_date, '%Y-%m-%d %H:%M:%S.%f').strftime('%Y_%m_%d_%H_%M_%S')
+        joblib.dump(clf, os.path.join(archive_folder, "lgb_model_{}.joblib".format(old_date)))
+        joblib.dump(old_meta_data, os.path.join(archive_folder, "meta_data_{}.joblib".format(old_date)))
+
+
+    joblib.dump(clf, os.path.join(prediction_folder, "lgb_model.joblib"))
+
 
     del train_X
     del train_y
     del valid_X
     del valid_y
     gc.collect()
-    
+
     test_y = test["TARGET"].values
     test_X = test[predictors].values
     test_pred = clf.predict_proba(test_X)[:,1]
     auc = roc_auc_score(test_y, test_pred)
-    
-    
-    
+
+
+
     version = hashlib.sha256(str.encode(created_date)).hexdigest()
     meta_data = {'version': version, 'created_at': created_date}
     joblib.dump(meta_data, os.path.join(prediction_folder, "meta_data.joblib"))
