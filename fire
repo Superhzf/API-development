@@ -32,7 +32,8 @@ parser_shell = subparsers.add_parser("shell",
                                      help="Open a terminal session in this application's development container.")
 # alembic
 alembic_shell = subparsers.add_parser("alembic",
-                                      help="Run an alembic migration.")
+                                      help="Run an alembic migration, you should use the "
+                                           "parameter -o with value upgrade/downgrade")
 alembic_shell.add_argument("-o", "--operation",
                            required=True,
                            choices=['upgrade', 'downgrade'])
