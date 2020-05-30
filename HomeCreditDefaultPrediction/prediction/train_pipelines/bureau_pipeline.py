@@ -3,7 +3,6 @@ import gc
 import pandas as pd
 from . import utils
 from . import config
-import random
 
 
 def get_bureau(path, num_rows=None):
@@ -48,9 +47,9 @@ def get_bureau(path, num_rows=None):
     agg_bureau = utils.group(bureau, 'BUREAU_', config.BUREAU_AGG)
     # Active and closed loans aggregations
     active = bureau[bureau['CREDIT_ACTIVE_Active'] == 1]
-    agg_bureau = utils.group_and_merge(active,agg_bureau,'BUREAU_ACTIVE_',config.BUREAU_ACTIVE_AGG)
+    agg_bureau = utils.group_and_merge(active, agg_bureau, 'BUREAU_ACTIVE_', config.BUREAU_ACTIVE_AGG)
     closed = bureau[bureau['CREDIT_ACTIVE_Closed'] == 1]
-    agg_bureau = utils.group_and_merge(closed,agg_bureau,'BUREAU_CLOSED_',config.BUREAU_CLOSED_AGG)
+    agg_bureau = utils.group_and_merge(closed, agg_bureau, 'BUREAU_CLOSED_', config.BUREAU_CLOSED_AGG)
     del active, closed
     gc.collect()
     # Aggregations for the main loan types
@@ -64,7 +63,7 @@ def get_bureau(path, num_rows=None):
     for time_frame in [6, 12, 24, 36]:
         prefix = "BUREAU_LAST{}M_".format(time_frame)
         time_frame_df = bureau[bureau['DAYS_CREDIT'] >= -30*time_frame]
-        agg_bureau = utils.group_and_merge(time_frame_df,agg_bureau,prefix,config.BUREAU_TIME_AGG)
+        agg_bureau = utils.group_and_merge(time_frame_df, agg_bureau, prefix, config.BUREAU_TIME_AGG)
         del time_frame_df
         gc.collect()
 

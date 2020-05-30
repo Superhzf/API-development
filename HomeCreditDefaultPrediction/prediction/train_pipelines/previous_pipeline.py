@@ -4,7 +4,7 @@ import numpy as np
 import pandas as pd
 from . import utils
 from . import config
-import random
+
 
 def get_previous_applications(path, num_rows=None):
     """Preprocess and extract features from previous_application.csv.

@@ -14,5 +14,4 @@ from pydantic import PositiveInt
 
 class DefaultPredictionRequestInput(BaseModel):
     SK_ID_CURR: PositiveInt = Body(..., description="Loan ID")
-    CNT_CHILDREN: int = Body(..., description="The number of children the client has", ge=0)
-    AMT_INCOME_TOTAL: int = Body(..., description="Income of the client", ge=0)
+

@@ -4,7 +4,7 @@ import pandas as pd
 from functools import partial
 from . import utils
 from . import config
-import random
+
 
 def get_pos_cash(path, num_rows= None):
     """Preprocess and extract features from POS_CASH_balance file.
@@ -141,7 +141,7 @@ def get_credit_card(path, num_rows= None):
     # Last month balance of each credit card application
     last_ids = cc.groupby('SK_ID_PREV')['MONTHS_BALANCE'].idxmax()
     last_months_df = cc[cc.index.isin(last_ids)]
-    cc_agg = utils.group_and_merge(last_months_df,cc_agg,'CC_LAST_', {'AMT_BALANCE': ['mean', 'max']})
+    cc_agg = utils.group_and_merge(last_months_df, cc_agg, 'CC_LAST_', {'AMT_BALANCE': ['mean', 'max']})
 
     # Aggregations for last x months
     for months in [12, 24, 48]:
@@ -193,15 +193,15 @@ def _installments_last_loan_features(gr):
 
     features = {}
     features = utils.add_features_in_group(features, gr_, 'DPD',
-                                     ['sum', 'mean', 'max', 'std'],
+                                           ['sum', 'mean', 'max', 'std'],
                                      'LAST_LOAN_')
     features = utils.add_features_in_group(features, gr_, 'LATE_PAYMENT',
-                                     ['count', 'mean'],
+                                           ['count', 'mean'],
                                      'LAST_LOAN_')
     features = utils.add_features_in_group(features, gr_, 'PAID_OVER_AMOUNT',
-                                     ['sum', 'mean', 'max', 'min', 'std'],
+                                           ['sum', 'mean', 'max', 'min', 'std'],
                                      'LAST_LOAN_')
     features = utils.add_features_in_group(features, gr_, 'PAID_OVER',
-                                     ['count', 'mean'],
+                                           ['count', 'mean'],
                                      'LAST_LOAN_')
     return features

@@ -24,24 +24,24 @@ from .api.lookup.output import ApiDefaultPredictionRequestOutputPrediction
 Base: Any = declarative_base()
 
 
-class DefaultPredictionRequest(Base):
-    __tablename__ = "default_requests"
-    __table_args__ = {"comment": "The logged requests of the home credit default prediction endpoint."}
-    id = Column(BigInteger, primary_key=True, comment="The primary key for the table")
-    created_at = Column(DateTime(timezone=True), server_default=func.now(), comment="When the record was inserted")
-    raw_request = Column(JSONB, nullable=False, comment="The raw request. It can be used to replay requests for debugging purpose")
-    SK_ID_CURR = Column(BigInteger, nullable=False, comment="Loan ID")
-    CNT_CHILDREN = Column(Integer, comment="The number of children the client has")
-    AMT_INCOME_TOTAL = Column(Integer,comment="Income of the client")
-
-    @classmethod
-    def from_api(cls, request: DefaultPredictionRequestInput) -> DefaultPredictionRequest:
-        return DefaultPredictionRequest(
-            raw_request=request.dict(),
-            SK_ID_CURR=request.SK_ID_CURR,
-            CNT_CHILDREN=request.CNT_CHILDREN,
-            AMT_INCOME_TOTAL=request.AMT_INCOME_TOTAL,
-        )
+# class DefaultPredictionRequest(Base):
+#     __tablename__ = "default_requests"
+#     __table_args__ = {"comment": "The logged requests of the home credit default prediction endpoint."}
+#     id = Column(BigInteger, primary_key=True, comment="The primary key for the table")
+#     created_at = Column(DateTime(timezone=True), server_default=func.now(), comment="When the record was inserted")
+#     raw_request = Column(JSONB, nullable=False, comment="The raw request. It can be used to replay requests for debugging purpose")
+#     SK_ID_CURR = Column(BigInteger, nullable=False, comment="Loan ID")
+#     CNT_CHILDREN = Column(Integer, comment="The number of children the client has")
+#     AMT_INCOME_TOTAL = Column(Integer,comment="Income of the client")
+#
+#     @classmethod
+#     def from_api(cls, request: DefaultPredictionRequestInput) -> DefaultPredictionRequest:
+#         return DefaultPredictionRequest(
+#             raw_request=request.dict(),
+#             SK_ID_CURR=request.SK_ID_CURR,
+#             CNT_CHILDREN=request.CNT_CHILDREN,
+#             AMT_INCOME_TOTAL=request.AMT_INCOME_TOTAL,
+#         )
 
 
 class DefaultPrediction(Base):
@@ -61,20 +61,20 @@ class DefaultPrediction(Base):
         comment="Foreign key that references model_metadata.id."
     )
     default_prob = Column(Float, nullable=False, comment="The default probability by the model")
-    default_request = relationship(
-        "DefaultPredictionRequest", backref=backref("default_requests", uselist=False, cascade="all, delete")
-    )
+    # default_request = relationship(
+    #     "DefaultPredictionRequest", backref=backref("default_requests", uselist=False, cascade="all, delete")
+    # )
 
     @classmethod
     def from_api(
             cls,
-            default_req: DefaultPredictionRequest,
+            # default_req: DefaultPredictionRequest,
             response: ApiDefaultPredictionRequestOutputPrediction,
             model_metadata: ModelMetaData
     ) -> DefaultPrediction:
         return DefaultPrediction(
             default_prob=response.predicted_default_probability,
-            default_request=default_req,
+            # default_request=default_req,
             model_id=model_metadata.id,
         )
 

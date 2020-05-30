@@ -12,7 +12,7 @@ from .default_prediction import PredictionModel
 from ..utils.db import save_model_metadata
 
 
-MODEL_PATH: str = "./HomeCreditDefaultPrediction/prediction/model_binaries/default_prediction_model.txt"
+MODEL_PATH: str = "./HomeCreditDefaultPrediction/prediction/model_binaries/lgb_model.joblib"
 
 
 @dataclass

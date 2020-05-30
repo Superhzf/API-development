@@ -13,7 +13,7 @@ from sqlalchemy.orm import sessionmaker
 # Local application/library specific imports
 from ..models.api.lookup.output import ApiDefaultPredictionRequestOutputPrediction
 from ..models.db import DefaultPrediction
-from ..models.db import DefaultPredictionRequest
+# from ..models.db import DefaultPredictionRequest
 from ..models.db import ModelMetaData
 from ..utils.logging import logger
 from ..utils.logging import LoggingType
@@ -74,34 +74,38 @@ def save_model_metadata(meta: ModelMetaData) -> ModelMetaData:
 
 
 def prediction_api_2_db(
-        default_request: DefaultPredictionRequest,
+        # default_request: DefaultPredictionRequest,
         response: ApiDefaultPredictionRequestOutputPrediction,
         model_metadata: ModelMetaData
 ) -> DefaultPrediction:
     """Convert the Prediction data model from API to DB"""
-    response = DefaultPrediction.from_api(default_req=default_request,
-                                          response=response,
+    # response = DefaultPrediction.from_api(default_req=default_request,
+    #                                       response=response,
+    #                                       model_metadata=model_metadata)
+    response = DefaultPrediction.from_api(response=response,
                                           model_metadata=model_metadata)
+
     return response
 
 
 def save_income_request_prediction(
-        default_request: DefaultPredictionRequest,
+        # default_request: DefaultPredictionRequest,
         response: ApiDefaultPredictionRequestOutputPrediction,
         model_metadata: ModelMetaData,
         db: Session
 ) -> int:
     """Store the income request inputs and outputs in the db from from the prediction logic"""
-    response = prediction_api_2_db(default_request, response, model_metadata)
+    response = prediction_api_2_db(response, model_metadata)
+    # response = prediction_api_2_db(default_request, response, model_metadata)
     db.add(response)
     db.commit()
     db.refresh(response)
     return response
 
 
-def save_default_request(request: DefaultPredictionRequest, db: Session) -> DefaultPredictionRequest:
-    default_req = DefaultPredictionRequest.from_api(request=request)
-    db.add(default_req)
-    db.commit()
-    db.refresh(default_req)
-    return default_req
+# def save_default_request(request: DefaultPredictionRequest, db: Session) -> DefaultPredictionRequest:
+#     default_req = DefaultPredictionRequest.from_api(request=request)
+#     db.add(default_req)
+#     db.commit()
+#     db.refresh(default_req)
+#     return default_req
