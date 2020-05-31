@@ -21,9 +21,13 @@ parser_start.add_argument("-l", "--logging",
                           required=False,
                           choices=["json", "text", "debug"],
                           default="text")
-# nuke
-parser_nuke = subparsers.add_parser("nuke",
-                                    help="Removes all docker images, even the ones unrelated to this project")
+# nuke image
+parser_nuke_img = subparsers.add_parser("nuke_image",
+                                        help="Removes all docker images, even the ones unrelated to this project")
+# nuke container
+parser_nuke_container = subparsers.add_parser("nuke_container",
+                                              help="Removes all docker containers, even the ones unrelated to this "
+                                                   "project, no matter they are stopped or running.")
 # stop
 parser_stop = subparsers.add_parser("stop",
                                     help="Stop all running containers, even the ones unrelated to this project")
@@ -98,7 +102,7 @@ elif args.command == 'start':
         ],
     }
     subprocess.check_call(logger[args.logging], stderr=STDERR, stdout=STDOUT)
-elif args.command == 'nuke':
+elif args.command == 'nuke_image':
     list_docker_images = ["docker", "images", "-q"]
     images = subprocess.check_output(list_docker_images)
     images = images.decode("utf-8").split("\n")[:-1]
@@ -108,6 +112,16 @@ elif args.command == 'nuke':
         print("All existing docker images have been dropped!")
     else:
         print('No docker images is found!')
+elif args.command == 'nuke_container':
+    list_docker_containers = ["docker", "ps", "-a", "-q"]
+    containers = subprocess.check_output(list_docker_containers)
+    containers = containers.decode("utf-8").split("\n")[:-1]
+    if len(containers) != 0:
+        full_command = ["docker", "container", "rm"] + containers
+        subprocess.check_call(full_command, stderr=STDERR, stdout=STDOUT)
+        print("All containers have been dropped!")
+    else:
+        print('No running/stopped containers is found!')
 elif args.command == 'stop':
     list_docker_containers = ['docker', 'ps', '-q']
     containers = subprocess.check_output(list_docker_containers)
