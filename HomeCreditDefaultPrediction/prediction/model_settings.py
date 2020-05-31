@@ -29,7 +29,7 @@ def init_models() -> None:
     prediction_model = PredictionModel(MODEL_PATH)
     meta = prediction_model.model['metadata']
     model_metadata = save_model_metadata(
-        ModelMetaData(model_version=meta['model_version'], model_description=meta['model_description'])
+        ModelMetaData(model_version=meta['version'], model_description=meta['model_description'])
     )
     CREDIT_MODEL = CreditModel(model=PredictionModel(MODEL_PATH), metadata=model_metadata)
     logger.info("loading model", data={"model": meta}, type=LoggingType.STARTUP_MESSAGE)

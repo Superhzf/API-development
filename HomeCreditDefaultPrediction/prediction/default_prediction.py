@@ -63,13 +63,8 @@ def feature_engineering(basic_feature: DataFrame) -> DataFrame:
 
     transformed_data.columns = ["".join(c if c.isalnum() else "_" for c in str(x)) for x in transformed_data.columns]
 
-    predictors = []
-    with open(os.path.join(PREDICTION_FOLDER, "features.txt")) as f:
-        for line in f:
-            predictors.append(line.strip())
-
-    transformed_data = transformed_data[predictors]
-    return transformed_data[predictors]
+    transformed_data = transformed_data
+    return transformed_data
 
 
 class PredictionModel(object):
@@ -87,8 +82,8 @@ class PredictionModel(object):
         if isinstance(basic_feature, ApiOutputNotFound):
             return basic_feature
 
-        full_features = feature_engineering(basic_feature)
-        prediction = self.model.predict_proba(full_features)[:, 1]
+        full_features = feature_engineering(basic_feature)[self.model["features"]]
+        prediction = self.model['model'].predict_proba(full_features)[:, 1]
         # prediction = request_input.AMT_INCOME_TOTAL*self.model['model_parameters']['AMT_INCOME_TOTAL']+\
         #              request_input.CNT_CHILDREN*self.model['model_parameters']['CNT_CHILDREN']
         # prediction = 1.0/(1+np.exp(-1*prediction))

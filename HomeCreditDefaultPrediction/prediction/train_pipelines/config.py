@@ -1,3 +1,6 @@
+DATA_FOLDER = "../VirtualDataWarehouse/"
+PREDICTION_FOLDER = '../HomeCreditDefaultPrediction/prediction/model_binaries/'
+ARCHIVE_FOLDER = '../HomeCreditDefaultPrediction/prediction/model_binaries/archive_binaries/'
 NUM_THREADS = 4
 NUM_FOLDS = 5
 EARLY_STOPPING = 100
