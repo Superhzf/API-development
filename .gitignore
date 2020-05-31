@@ -134,3 +134,4 @@ play_around.py
 .DS_Store
 *.joblib
 *.csv
+*.txt
