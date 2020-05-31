@@ -30,21 +30,16 @@ router = APIRouter()
 @dataclass
 class DefaultRequestRepr:
     api: DefaultPredictionRequestInput
-    # db: DefaultPredictionRequest
 
 
 def get_default_prediction(
         default_request_repr: DefaultRequestRepr, db: Session
 ) -> ApiDefaultPredictionRequestOutputPrediction:
-    response = model_settings.CREDIT_MODEL.model.predict(default_request_repr.api)
-    response = ApiDefaultPredictionRequestOutputPrediction(predicted_default_probability=response)
-
+    response = model_settings.CREDIT_MODEL.model.predict(request_input=default_request_repr.api)
+    response = ApiDefaultPredictionRequestOutputPrediction(predicted_default_probability=response,
+                                                           loan_id=default_request_repr.api.SK_ID_CURR)
     model_metadata: ModelMetaData = model_settings.CREDIT_MODEL.metadata
-    save_income_request_prediction(default_request_repr.db, response, model_metadata, db)
-
-    # if default_request_repr.db:
-    #     model_metadata: ModelMetaData = model_settings.CREDIT_MODEL.metadata
-    #     save_income_request_prediction(default_request_repr.db, response, model_metadata, db)
+    save_income_request_prediction(response, model_metadata, db)
 
     return response
 
@@ -55,16 +50,6 @@ def get_default_prediction(
 def request_default(request: DefaultPredictionRequestInput, db: Session = Depends(get_db)) -> JSONResponse:
     start_time = time.time()
     db.expire_all()
-
-    # we do not need to save default request
-    # # obtain db repr of default request
-    # persisted_income_request: DefaultPredictionRequest = save_default_request(request, db)
-    # default_request_repr = DefaultRequestRepr(api=request, db=persisted_income_request)
-    # logger.info(
-    #     "save default request", data={"persisted-default-income-request": persisted_income_request},
-    #     type=LoggingType.MISC
-    # )
-
     default_request_repr = DefaultRequestRepr(api=request)
 
     response = get_default_prediction(default_request_repr, db)

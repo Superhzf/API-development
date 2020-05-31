@@ -18,6 +18,7 @@ class NotFoundMessage(EstEnum):
 class ApiDefaultPredictionRequestOutputPrediction(BaseModel):
     predicted_default_probability: float = Body(..., description="Prediction for the ability to pay",
                                                 ge=0, le=1, example=0.5)
+    loan_id: int = Body(..., description='Loan ID')
 
 
 class ApiOutputNotFound(BaseModel):

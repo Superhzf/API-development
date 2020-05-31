@@ -12,7 +12,7 @@ from .default_prediction import PredictionModel
 from ..utils.db import save_model_metadata
 
 
-MODEL_PATH: str = "./HomeCreditDefaultPrediction/prediction/model_binaries/lgb_model.joblib"
+MODEL_PATH: str = "./HomeCreditDefaultPrediction/prediction/model_binaries/default_prediction_model.joblib"
 
 
 @dataclass
@@ -27,7 +27,7 @@ CREDIT_MODEL: Optional[CreditModel] = None
 def init_models() -> None:
     global CREDIT_MODEL
     prediction_model = PredictionModel(MODEL_PATH)
-    meta = prediction_model.model['metadata']
+    meta = prediction_model.model['meta_data']
     model_metadata = save_model_metadata(
         ModelMetaData(model_version=meta['version'], model_description=meta['model_description'])
     )

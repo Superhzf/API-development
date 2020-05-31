@@ -6,7 +6,7 @@ from typing import Any, Callable
 from fastapi import FastAPI, Request
 
 # Local application/library specific imports
-from HomeCreditDefaultPrediction.prediction.data_settings import init_db
+from HomeCreditDefaultPrediction.prediction import data_settings
 from .utils.logging import logging_setup, logger, LoggingType
 from .utils.app import get_app_name, get_app_version
 from .prediction import model_settings
@@ -23,8 +23,11 @@ app = FastAPI(title=get_app_name(),
 
 @app.on_event('startup')
 def startup_event() -> None:
+    print('-----------Model initialization-------------')
     model_settings.init_models()
-    init_db()
+    print('-----------DB initialization----------------')
+    data_settings.init_db()
+    print('initialization looks good!')
     return None
 
 
