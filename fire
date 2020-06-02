@@ -41,6 +41,8 @@ alembic_shell = subparsers.add_parser("alembic",
 alembic_shell.add_argument("-o", "--operation",
                            required=True,
                            choices=['upgrade', 'downgrade'])
+# unit test
+test_shell = subparsers.add_parser('test', help="Run the unit test in the dev container")
 
 args = parser.parse_args()
 STDOUT = None
@@ -153,3 +155,6 @@ elif args.command == 'alembic':
     except:
         print("DB ops failed, it may because you are doing downgrade but no db available in the database, please try "
               "upgrade first")
+elif args.command == 'test':
+    command = r"docker-compose run dev python -m pytest --hypothesis-show-statistics --cov-append tests/"
+    subprocess.run(command, stderr=STDERR, stdout=STDOUT, shell=True, check=True, text=True)
