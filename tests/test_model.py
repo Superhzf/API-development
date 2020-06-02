@@ -12,7 +12,6 @@ from HomeCreditDefaultPrediction.prediction import data_settings
 from HomeCreditDefaultPrediction.prediction.model_settings import MODEL_PATH
 
 
-
 def test_model_is_available():
     model = joblib.load(MODEL_PATH)
 
@@ -59,5 +58,5 @@ def test_feature_engineering():
     record = get_default_request_data(random_loan_id)
     model = joblib.load(MODEL_PATH)
     full_record = feature_engineering(record, model['transformer'])
-    assert full_record.shape[0]==1, "Only 1 record shoud be matched"
+    assert full_record.shape[0]==1, "Only 1 record should be matched"
 
