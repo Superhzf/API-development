@@ -23,11 +23,8 @@ app = FastAPI(title=get_app_name(),
 
 @app.on_event('startup')
 def startup_event() -> None:
-    print('-----------Model initialization-------------')
     model_settings.init_models()
-    print('-----------DB initialization----------------')
     data_settings.init_db()
-    print('initialization looks good!')
     return None
 
 

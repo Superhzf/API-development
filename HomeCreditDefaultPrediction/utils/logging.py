@@ -61,7 +61,7 @@ class CustomJsonFormatter(jsonlogger.JsonFormatter):
                 **log_record.get('data', {}),
                 **access_request_fields,
             }
-        elif any(stop_str in record.getMessage().lower() for stop_str in ['start','running']):
+        elif any(stop_str in record.getMessage().lower() for stop_str in ['start', 'running']):
             log_record['type'] = LoggingType.STARTUP_MESSAGE
         elif any(stop_str in record.getMessage().lower() for stop_str in ['shut', 'finish']):
             log_record['type'] = LoggingType.SHUTDOWN_MESSAGE
@@ -136,7 +136,7 @@ def logging_text() -> None:
 def logging_json() -> None:
     structlog.configure(
         processors=[
-            # Check whether logging is configured to accept messages from this log level.
+            # https://www.structlog.org/en/stable/standard-library.html?highlight=level#rendering-using-logging-based-formatters
             structlog.stdlib.filter_by_level,
             structlog.stdlib.add_logger_name,
             structlog.stdlib.add_log_level,
@@ -159,8 +159,8 @@ def logging_json() -> None:
 
 
 def logging_setup() -> None:
-    logging_style = os.environ.get('logging', 'json')
-    if logging_style == 'text':
-        logging_text()
-    else:
-        logging_json()
+    # logging_style = os.environ.get('logging', 'json')
+    # if logging_style == 'text':
+    #     logging_text()
+    # else:
+    logging_json()

@@ -100,3 +100,7 @@ A:
 5. How to open a terminal session in a running container?
 A:
 https://stackoverflow.com/questions/17903705/is-it-possible-to-start-a-shell-session-in-a-running-container-without-ssh
+
+6. Why environment variables in micro-service?
+A: The reason is that it is less likely to introduce new bugs by changing those variables. If we define constant
+variables in scripts, we have to modify Python scripts to change them.
