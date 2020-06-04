@@ -41,7 +41,7 @@ async def ping(common: dict = Depends(common_response_fields)) -> Dict:
         **{'virtual_mem_used_MB': virtual_memory_usage_psutil()},
         **{'process_mem_used_MB': process_memory_usage_psutil()}
     }
-    logger.info('ping', data={'response':response},type=LoggingType.REQUEST_RESPONSE_LOG)
+    logger.info('ping', data={'response': response}, type=LoggingType.REQUEST_RESPONSE_LOG)
     return response
 
 

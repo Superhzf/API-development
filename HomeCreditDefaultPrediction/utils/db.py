@@ -5,6 +5,7 @@ from typing import Any
 # Related third party libraries
 from sqlalchemy import create_engine
 from sqlalchemy.engine import Engine
+from sqlalchemy.exc import DatabaseError
 from starlette.requests import Request
 from sqlalchemy.orm import Session
 from sqlalchemy.orm import sessionmaker
@@ -69,12 +70,18 @@ def save_model_metadata(meta: ModelMetaData) -> ModelMetaData:
                 type=LoggingType.DB_OPS
             )
             return meta
+    except Exception as e:
+        logger.info(e,
+                    data={"id": meta.id,
+                          "created": meta.created_at,
+                          "version": meta.model_version,
+                          "description": meta.model_description},
+                    type=LoggingType.EXCEPTION)
     finally:
         db.close()
 
 
 def prediction_api_2_db(
-        # default_request: DefaultPredictionRequest,
         response: ApiDefaultPredictionRequestOutputPrediction,
         model_metadata: ModelMetaData
 ) -> DefaultPrediction:

@@ -62,4 +62,3 @@ async def db_session_middleware(request: Request, call_next: Callable) -> Any:
     finally:
         request.state.db.close()
     return Response("Internal server error", status_code=500)
-

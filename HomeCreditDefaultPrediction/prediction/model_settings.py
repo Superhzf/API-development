@@ -26,7 +26,10 @@ CREDIT_MODEL: Optional[CreditModel] = None
 
 def init_models() -> None:
     global CREDIT_MODEL
-    prediction_model = PredictionModel(MODEL_PATH)
+    try:
+        prediction_model = PredictionModel(MODEL_PATH)
+    except FileNotFoundError as e:
+        logger.error(e,  type=LoggingType.EXCEPTION)
     meta = prediction_model.model['meta_data']
     model_metadata = save_model_metadata(
         ModelMetaData(model_version=meta['version'], model_description=meta['model_description'])

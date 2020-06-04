@@ -1,4 +1,5 @@
 # Standard build-in libraries
+from datetime import datetime
 import gc
 import joblib
 import os
@@ -10,8 +11,9 @@ from pandas import DataFrame
 from sklearn.pipeline import Pipeline
 
 # Local application/library specific imports
-from ..models.api.lookup.input import DefaultPredictionRequestInput
 from HomeCreditDefaultPrediction.prediction import data_settings
+from HomeCreditDefaultPrediction.utils.logging import logger
+from ..models.api.lookup.input import DefaultPredictionRequestInput
 from ..models.api.lookup.output import ApiOutputNotFound
 from ..models.api.lookup.output import NotFoundMessage
 from .train_pipelines.utils import general_preprocess
@@ -72,10 +74,22 @@ class PredictionModel(object):
         self.model = joblib.load(model_path)
 
     def predict(self, request_input: DefaultPredictionRequestInput) -> Union[float, ApiOutputNotFound]:
-        basic_feature = get_default_request_data(request_input.SK_ID_CURR)
+        try:
+            basic_feature = get_default_request_data(request_input.SK_ID_CURR)
+        except Exception as e:
+            logger.error('Fail matching the basic information from DW!', data={'loan id': request_input.SK_ID_CURR,
+                                                                               'time': datetime.utcnow()})
         if isinstance(basic_feature, ApiOutputNotFound):
             return basic_feature
-        full_features = feature_engineering(basic_feature, self.model['transformer'])[self.model["features"]]
-        prediction = self.model['model'].predict_proba(full_features)[:, 1]
+        try:
+            full_features = feature_engineering(basic_feature, self.model['transformer'])[self.model["features"]]
+        except Exception as e:
+            logger.error("Fail matching full features from DW!", data={'loan id': request_input.SK_ID_CURR,
+                                                                       'time': datetime.utcnow()})
 
+        try:
+            prediction = self.model['model'].predict_proba(full_features)[:, 1]
+        except Exception as e:
+            logger.error('Fail making predictions!', data={'loan id': request_input.SK_ID_CURR,
+                                                           'time': datetime.utcnow()})
         return prediction

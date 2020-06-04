@@ -6,7 +6,7 @@ from typing import Union
 # Related third party libraries
 from fastapi import APIRouter
 from fastapi import Depends
-from pandas import DataFrame
+import numpy as np
 from starlette.responses import JSONResponse
 from sqlalchemy.orm import Session
 
@@ -15,12 +15,12 @@ from ..models.api.lookup.input import DefaultPredictionRequestInput
 from ..models.api.lookup.output import ApiDefaultPredictionRequestOutputPrediction
 
 # from ..models.db import DefaultPredictionRequest
+from ..models.api.lookup.output import ApiOutputNotFound
 from ..utils.db import get_db
 from ..utils.logging import logger
 from ..utils.logging import LoggingType
 from ..models.db import ModelMetaData
 from ..prediction import model_settings
-# from ..utils.db import save_default_request
 from ..utils.db import save_income_request_prediction
 
 
@@ -36,6 +36,8 @@ def get_default_prediction(
         default_request_repr: DefaultRequestRepr, db: Session
 ) -> ApiDefaultPredictionRequestOutputPrediction:
     response = model_settings.CREDIT_MODEL.model.predict(request_input=default_request_repr.api)
+    if isinstance(response, ApiOutputNotFound):
+        response = -1
     response = ApiDefaultPredictionRequestOutputPrediction(predicted_default_probability=response,
                                                            loan_id=default_request_repr.api.SK_ID_CURR)
     model_metadata: ModelMetaData = model_settings.CREDIT_MODEL.metadata
