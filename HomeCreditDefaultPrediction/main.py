@@ -29,7 +29,7 @@ def startup_event() -> None:
 
 
 app.include_router(ops.router, tags=['ops'])
-app.include_router(default.router, prefix="/income", tags=["income"])
+app.include_router(default.router, prefix="/default", tags=["default"])
 
 
 @app.middleware('http')

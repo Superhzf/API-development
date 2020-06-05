@@ -92,7 +92,7 @@ def prediction_api_2_db(
     return response
 
 
-def save_income_request_prediction(
+def save_default_request_prediction(
         response: ApiDefaultPredictionRequestOutputPrediction,
         model_metadata: ModelMetaData,
         db: Session

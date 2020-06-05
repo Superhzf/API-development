@@ -1,7 +1,7 @@
 [tool.poetry]
 name = "income-service"
 version = "0.1.0"
-description = "Income verification/prediction service"
+description = "Default prediction service"
 authors = ["Zach Hu <superhzf@hotmail.com>"]
 
 [tool.poetry.dependencies]

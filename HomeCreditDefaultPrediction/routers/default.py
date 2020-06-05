@@ -13,15 +13,13 @@ from sqlalchemy.orm import Session
 # Local application/library specific imports
 from ..models.api.lookup.input import DefaultPredictionRequestInput
 from ..models.api.lookup.output import ApiDefaultPredictionRequestOutputPrediction
-
-# from ..models.db import DefaultPredictionRequest
 from ..models.api.lookup.output import ApiOutputNotFound
 from ..utils.db import get_db
 from ..utils.logging import logger
 from ..utils.logging import LoggingType
 from ..models.db import ModelMetaData
 from ..prediction import model_settings
-from ..utils.db import save_income_request_prediction
+from ..utils.db import save_default_request_prediction
 
 
 router = APIRouter()
@@ -41,7 +39,7 @@ def get_default_prediction(
     response = ApiDefaultPredictionRequestOutputPrediction(predicted_default_probability=response,
                                                            loan_id=default_request_repr.api.SK_ID_CURR)
     model_metadata: ModelMetaData = model_settings.CREDIT_MODEL.metadata
-    save_income_request_prediction(response, model_metadata, db)
+    save_default_request_prediction(response, model_metadata, db)
 
     return response
 
