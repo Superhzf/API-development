@@ -1,5 +1,5 @@
 [tool.poetry]
-name = "income-service"
+name = "default-prediction-service"
 version = "0.1.0"
 description = "Default prediction service"
 authors = ["Zach Hu <superhzf@hotmail.com>"]

@@ -97,7 +97,7 @@ def save_default_request_prediction(
         model_metadata: ModelMetaData,
         db: Session
 ) -> int:
-    """Store the income request inputs and outputs in the db from from the prediction logic"""
+    """Store the default request inputs and outputs in the db from from the prediction logic"""
     response = prediction_api_2_db(response, model_metadata)
     db.add(response)
     db.commit()
