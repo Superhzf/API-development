@@ -22,7 +22,7 @@ services:
     entrypoint:
       - ./dev-tools/service.docker-entrypoint.sh
     networks:
-      - income_service_no_staging_conflict
+      - default_prediction_service_no_staging_conflict
 
   pgsql-dev:
     image: postgres:9.4.20
@@ -36,10 +36,10 @@ services:
       - POSTGRES_DB=database
     command: "postgres"
     networks:
-      - income_service_no_staging_conflict
+      - default_prediction_service_no_staging_conflict
 
 networks:
-  income_service_no_staging_conflict:
+  default_prediction_service_no_staging_conflict:
     driver: bridge
     ipam:
       driver: default
