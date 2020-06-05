@@ -135,3 +135,4 @@ play_around.py
 *.joblib
 *.csv
 *.txt
+learn_fastapi
