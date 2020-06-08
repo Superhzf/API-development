@@ -4,7 +4,7 @@ import subprocess
 
 parser = argparse.ArgumentParser(prog="fire",
                                  description="Fire script for the default prediction service",
-                                 usage="%(prog)s [-v] actions")
+                                 usage="./%(prog)s [-v] actions")
 subparsers = parser.add_subparsers(title="actions", dest="command")
 
 parser.add_argument("-v", "--verbose",
