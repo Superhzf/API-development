@@ -4,6 +4,7 @@
 - [Initial Setup](#initial-setup)
 - [FIRE Commands](#fire-commands)
 - [Core Technologies Used](#core-technologies-used)
+- [TODO: features and improvements](#todo-features-and-improvements)
 
 
 # General Description
@@ -87,3 +88,7 @@ service and actively maintain or add features.
 * [Pandas](https://pandas.pydata.org/): Data manipulation package
 * [PyDantic](https://pydantic-docs.helpmanual.io/): Case classes and validation tool
 * [python-json-logger](https://github.com/madzak/python-json-logger): Logging library
+
+#TODO features and improvements
+* Add model monitoring system
+* The model should be able to return adverse actions along with the probability
