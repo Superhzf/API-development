@@ -9,7 +9,7 @@
 This is a side project helping Home Credit predict applicants' repayment abilities. The data
 comes from [kaggle](https://www.kaggle.com/c/home-credit-default-risk). The basic
 logic is as follows:
-![flowchhart][images/hc_flow.png]
+![flowchhart][images/hc_flow.png?raw=True]
 
 
 
