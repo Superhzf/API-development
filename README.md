@@ -11,7 +11,8 @@ to people with little or no credit history. [Wiki page for Home Credit](https://
 
 This production ready service aims to help Home Credit predict applicants' repayment abilities. The data
 comes from [kaggle](https://www.kaggle.com/c/home-credit-default-risk). The basic
-logic is as follows: ![flowchhart](images/hc_flow.png)
+logic is as follows:
+![flowchhart](images/hc_flow.png)
 
 The data set mainly includes 6 parts:
 - Basic application information
