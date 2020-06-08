@@ -1,6 +1,7 @@
 # Home Credit default prediction service
 
 - [General Description](#general-description)
+- [Initial Setup](#initial-setup)
 - [FIRE Commands](#fire-commands)
 - [Core Technologies Used](#core-technologies-used)
 
@@ -10,17 +11,31 @@ Home Credit is an international non-bank financial institution. It focuses on le
 to people with little or no credit history. [Wiki page for Home Credit](https://en.wikipedia.org/wiki/Home_Credit)
 
 This production ready service aims to help Home Credit predict applicants' repayment abilities. The data
-comes from [kaggle](https://www.kaggle.com/c/home-credit-default-risk). The basic
+comes from [kaggle](https://www.kaggle.com/c/home-credit-default-risk/data). The basic
 logic is as follows:
 ![flowchhart](images/hc_flow.png)
 
 The data set mainly includes 6 parts:
-- Basic application information
-- Bureau data
-- Point of sale (POS) balance
-- Credit card balance
-- Previous application data
-- Installment payments
+* Basic application information
+* Bureau data
+* Point of sale (POS) balance: POS is one of Home Credit products
+* Credit card balance: credit card is one of Home Credit products
+* Previous application data
+* Installment payments: This include installment payments of all Home Credit products
+
+# Initial Setup
+The following are required to work on the Home Credit default prediction service:
+* Download and unzip data from [kaggle](https://www.kaggle.com/c/home-credit-default-risk/data) and
+put all data into folder `VirtualDataWarehouse`
+* Follow the instructions in folder `model-retraining` to do virtual ETL and train the model
+* Python 3.7.3
+* Poetry
+* [Poetry](https://github.com/sdispater/poetry)
+    * `curl -sSL https://raw.githubusercontent.com/sdispater/poetry/master/get-poetry.py | python`
+* [Docker](https://docs.docker.com/v17.12/docker-for-mac/install/)
+* Run `./fire rebuild` to build the service locally
+* Run `./fire alembic upgrade` to run database migrations locally
+* To make sure that everything is working, run `./go test all`
 
 # FIRE Commands
 In order to improve the development efficiency, a collection of FIRE commands are introduced:
