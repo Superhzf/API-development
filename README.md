@@ -31,16 +31,17 @@ The data set mainly includes 6 parts:
 
 # Initial Setup
 The following are required to work on the Home Credit default prediction service:
-* Download and unzip data from [kaggle](https://www.kaggle.com/c/home-credit-default-risk/data) and
-put all data into folder `VirtualDataWarehouse`
-* Follow the instructions in folder `model-retraining` to do virtual ETL and train the model. Please note
-that, the ETL part should be done in the data warehouse instead of here in reality.
 * Python 3.7.3
 * Poetry
 * [Poetry](https://github.com/sdispater/poetry)
     * `curl -sSL https://raw.githubusercontent.com/sdispater/poetry/master/get-poetry.py | python`
 * [Docker](https://docs.docker.com/v17.12/docker-for-mac/install/)
 * Run `./fire rebuild` to build the service locally
+* (Optional)Download and unzip data from [kaggle](https://www.kaggle.com/c/home-credit-default-risk/data) and
+put all data into folder `VirtualDataWarehouse`
+* (Optional)Follow the instructions in folder `model-retraining` to do virtual ETL and train the model. Please note
+that, the ETL part should be done in the data warehouse instead of here in reality.
+* Run `./fire alembic start`
 * Run `./fire alembic upgrade` to run database migrations locally
 * To make sure that everything is working, run `./go test all`
 
@@ -89,6 +90,6 @@ service and actively maintain or add features.
 * [PyDantic](https://pydantic-docs.helpmanual.io/): Case classes and validation tool
 * [python-json-logger](https://github.com/madzak/python-json-logger): Logging library
 
-#TODO features and improvements
+# TODO features and improvements
 * Add model monitoring system
 * The model should be able to return adverse actions along with the probability
