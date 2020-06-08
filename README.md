@@ -13,7 +13,9 @@ to people with little or no credit history. [Wiki page for Home Credit](https://
 This service aims to help Home Credit predict applicants' repayment abilities. The data
 comes from [kaggle](https://www.kaggle.com/c/home-credit-default-risk/data). The basic
 logic is as follows:
+
 ![flowchhart](images/hc_flow.png)
+
 Please note that, this service would have the best performance on returning customers, so in reality the 
 main service should call this service if and only if customers are already in the data warehouse and have
 business with Home Credit.
