@@ -13,11 +13,13 @@ To retrain/train the credit default model, run the following commands in the pro
 * Run `python3 DoETL.py`
 * Run `python3 train_model.py`
 
-This will generate a model binary that will be stored inside `HomeCreditDefaultPrediction/prediction/model-binaries/`
+This will generate 
+1. A model binary that will be stored inside `../HomeCreditDefaultPrediction/prediction/model-binaries/`
 The model binary will contain metadata in the form of a dictionary that has the following:
   - A brief description of the model
   - Timestamp for when the model was built
   - A sha256 hash identifying specifying the model version.
+2. A bunch of `.joblib` files which are the result of ETL procedure in `/VirtualDataWareHouse`
 
-Please note that by default the existing model will be moved into `HomeCreditDefaultPrediction/prediction/model-binaries/archive_binaries`
+Instead of being overwritten, by default the existing model will be moved into `HomeCreditDefaultPrediction/prediction/model-binaries/archive_binaries`
 
