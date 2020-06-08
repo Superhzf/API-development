@@ -8,7 +8,7 @@ in the `VirtualDataWarehouse` directory within the root of the project.
 Assuming that you follow the instructions in the README file. 
 To retrain/train the credit default model, run the following commands in the project root folder:
 * Run `./fire rebuild`
-* Run `./go shell`
+* Run `./fire shell`
 * Run `cd model-retraining`
 * Run `python3 DoETL.py`
 * Run `python3 train_model.py`
