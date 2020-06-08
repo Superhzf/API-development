@@ -10,16 +10,19 @@
 Home Credit is an international non-bank financial institution. It focuses on lending primarily
 to people with little or no credit history. [Wiki page for Home Credit](https://en.wikipedia.org/wiki/Home_Credit)
 
-This production ready service aims to help Home Credit predict applicants' repayment abilities. The data
+This service aims to help Home Credit predict applicants' repayment abilities. The data
 comes from [kaggle](https://www.kaggle.com/c/home-credit-default-risk/data). The basic
 logic is as follows:
 ![flowchhart](images/hc_flow.png)
+Please note that, this service would have the best performance on returning customers, so in reality the 
+main service should call this service if and only if customers are already in the data warehouse and have
+business with Home Credit.
 
 The data set mainly includes 6 parts:
 * Basic application information
 * Bureau data
-* Point of sale (POS) balance: POS is one of Home Credit products
-* Credit card balance: credit card is one of Home Credit products
+* Point of sale (POS) balance: POS (a.k.a consumer finance) is one of Home Credit products
+* Credit card balance: credit card (a.k.a line of credit) is one of Home Credit products
 * Previous application data
 * Installment payments: This include installment payments of all Home Credit products
 
@@ -27,7 +30,8 @@ The data set mainly includes 6 parts:
 The following are required to work on the Home Credit default prediction service:
 * Download and unzip data from [kaggle](https://www.kaggle.com/c/home-credit-default-risk/data) and
 put all data into folder `VirtualDataWarehouse`
-* Follow the instructions in folder `model-retraining` to do virtual ETL and train the model
+* Follow the instructions in folder `model-retraining` to do virtual ETL and train the model. Please note
+that, the ETL part should be done in the data warehouse instead of here in reality.
 * Python 3.7.3
 * Poetry
 * [Poetry](https://github.com/sdispater/poetry)
@@ -69,3 +73,15 @@ actions:
 
 ```
 # Core Technologies Used
+This is a list of core packages and frameworks that a developer needs to know in order to be able to work with this 
+service and actively maintain or add features.
+
+* [FastApi](https://github.com/tiangolo/fastapi):  API framework.
+* [Alembic](https://alembic.sqlalchemy.org/en/latest/): Database migration tool.
+* [SQLAlchemy](https://www.sqlalchemy.org/): Database ORM tool.
+* [Pytest](https://pytest.org/en/latest/): Testing framework
+* [Poetry](https://github.com/sdispater/poetry): Dependency management tool
+* [Numpy](https://numpy.org/): Numerical computing package
+* [Pandas](https://pandas.pydata.org/): Data manipulation package
+* [PyDantic](https://pydantic-docs.helpmanual.io/): Case classes and validation tool
+* [python-json-logger](https://github.com/madzak/python-json-logger): Logging library
