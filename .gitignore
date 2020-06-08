@@ -136,7 +136,3 @@ play_around.py
 *.csv
 *.txt
 learn_fastapi
-# Ignore everything in this directory
-*
-# Except this file
-!.gitignore
