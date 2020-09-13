@@ -17,7 +17,7 @@ logic is as follows:
 
 ![flowchhart](images/hc_flow.png)
 
-Please note that, this service would have the best performance on returning customers, so in reality the 
+Please note that, this service would have the best performance on returning customers, so in reality the
 main service should call this service if and only if customers are already in the data warehouse and have
 business with Home Credit.
 
@@ -27,7 +27,7 @@ The data set mainly includes 6 parts:
 * Point of sale (POS) balance: POS (a.k.a consumer finance) is one of Home Credit products
 * Credit card balance: credit card (a.k.a line of credit) is one of Home Credit products
 * Previous application data
-* Installment payments: This include installment payments of all Home Credit products
+* Installment payments: This includes installment payments of all Home Credit products
 
 # Initial Setup
 The following are required to work on the Home Credit default prediction service:
@@ -77,18 +77,19 @@ actions:
 
 ```
 # Core Technologies Used
-This is a list of core packages and frameworks that a developer needs to know in order to be able to work with this 
+This is a list of core packages and frameworks that a developer needs to know in order to be able to work with this
 service and actively maintain or add features.
 
-* [FastApi](https://github.com/tiangolo/fastapi):  API framework.
 * [Alembic](https://alembic.sqlalchemy.org/en/latest/): Database migration tool.
-* [SQLAlchemy](https://www.sqlalchemy.org/): Database ORM tool.
-* [Pytest](https://pytest.org/en/latest/): Testing framework
-* [Poetry](https://github.com/sdispater/poetry): Dependency management tool
+* [Docker](https://www.docker.com/): Containers
+* [FastApi](https://github.com/tiangolo/fastapi):  API framework.
 * [Numpy](https://numpy.org/): Numerical computing package
 * [Pandas](https://pandas.pydata.org/): Data manipulation package
+* [Poetry](https://github.com/sdispater/poetry): Dependency management tool
 * [PyDantic](https://pydantic-docs.helpmanual.io/): Case classes and validation tool
+* [Pytest](https://pytest.org/en/latest/): Testing framework
 * [python-json-logger](https://github.com/madzak/python-json-logger): Logging library
+* [SQLAlchemy](https://www.sqlalchemy.org/): Database ORM tool.
 
 # TODO features and improvements
 * Add model monitoring system
