@@ -32,7 +32,6 @@ The data set mainly includes 6 parts:
 # Initial Setup
 The following are required to work on the Home Credit default prediction service:
 * Python 3.7.3
-* Poetry
 * [Poetry](https://github.com/sdispater/poetry)
     * `curl -sSL https://raw.githubusercontent.com/sdispater/poetry/master/get-poetry.py | python`
 * [Docker](https://docs.docker.com/v17.12/docker-for-mac/install/)
